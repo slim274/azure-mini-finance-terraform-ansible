@@ -1,0 +1,7 @@
+flowchart TB
+    T[Terraform IaC] --> A[Azure resource group / VNet / subnet / NSG]
+    A --> VM[Ubuntu Azure VM]
+    C[Ansible controller] -->|SSH public-key authentication| VM
+    G[Upstream Mini Finance website] -->|Ansible Git checkout| VM
+    VM --> NG[Nginx /var/www/html]
+    B[Browser / Ansible uri] -->|HTTP 80| NG

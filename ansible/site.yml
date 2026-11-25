@@ -1,0 +1,67 @@
+---
+# PLAY 1: Install nginx and dependencies
+- name: Install nginx and dependencies
+  hosts: web
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install nginx and unzip
+      apt:
+        name:
+          - nginx
+          - unzip
+        state: present
+
+    - name: Ensure nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+
+# PLAY 2: Deploy Mini Finance Website
+# PLAY 2: Deploy Mini Finance Website
+- name: Deploy mini finance app
+  hosts: web
+  become: true
+
+  tasks:
+    - name: Ensure git is installed
+      apt:
+        name: git
+        state: present
+
+    - name: Clone repository
+      git:
+        repo: https://github.com/pravinmishraaws/mini_finance.git
+        dest: /tmp/mini-finance
+        version: main
+        force: yes
+
+    - name: Copy site to nginx directory
+      copy:
+        src: /tmp/mini-finance/
+        dest: /var/www/html/
+        remote_src: yes
+      notify: restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+
+# PLAY 3: Verify Deployment
+- name: Verify website is reachable
+  hosts: localhost
+
+  tasks:
+    - name: Check HTTP response
+      uri:
+        url: "http://{{ hostvars[groups['web'][0]].ansible_host }}"
+        status_code: 200

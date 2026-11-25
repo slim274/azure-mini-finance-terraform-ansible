@@ -1,0 +1,20 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+
+# Credentials
+.env
+.env.*
+*.pem
+*.key
+.vault_pass
+vault-password*
+
+# Ansible
+*.retry
+
+# OS files
+.DS_Store
